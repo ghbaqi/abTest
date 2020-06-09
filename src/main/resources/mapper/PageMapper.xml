@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hupu.themis.admin.system.mapper.PageMapper">
+    <insert id="bindExperimentGroupId">
+        INSERT INTO experiments_pages(experiment_group_id,page_id)
+        VALUES
+        <foreach collection="pageIds" item="id" separator=",">
+            (#{experimentGroupId},#{id})
+        </foreach>
+    </insert>
+    <delete id="unbindExperimentGroupId">
+        DELETE FROM experiments_pages
+        WHERE experiment_group_id= #{experimentGroupId}
+        AND page_id IN
+        <foreach collection="pageIds" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <select id="findEmployPage" resultType="com.hupu.themis.admin.system.domain.ExperimentGroup">
+        SELECT eg.*
+        FROM page AS a
+        INNER JOIN experiments_pages AS ep ON  a.id = ep.page_id
+        INNER JOIN experiment_group AS eg ON eg.id = ep.experiment_group_id
+        WHERE a.id = #{pageId}
+        AND eg.`status`  IN ('TEST','RUNNING')
+    </select>
+</mapper>

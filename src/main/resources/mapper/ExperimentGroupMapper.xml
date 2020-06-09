@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hupu.themis.admin.system.mapper.ExperimentGroupMapper">
+    <update id="changeStatus">
+        update experiment_group
+        set `status`=#{status},
+        modify_time=#{cdate}
+        <if test="duration != null">
+            ,duration=#{duration}
+        </if>
+        <if test="startTime !=null">
+            ,start_time=#{startTime}
+        </if>
+        WHERE id=#{id} AND `status`!=#{status}
+    </update>
+    <update id="updateBatch">
+        UPDATE
+        experiment_group
+        <set>
+            create_time = CASE
+            <foreach item="item" index="index" collection="list" separator="">
+                WHEN id=#{item.id}
+                <if test="item.create_time == null">
+                    AND 1=2
+                </if>
+                THEN #{item.create_time}
+            </foreach>
+            ELSE create_time END,
+            modify_time = CASE
+            <foreach item="item" index="index" collection="list" separator="">
+                WHEN id=#{item.id}
+                <if test="item.modify_time == null">
+                    AND 1=2
+                </if>
+                THEN #{item.modify_time}
+            </foreach>
+            ELSE modify_time END,
+            `name` = CASE
+            <foreach item="item" index="index" collection="list" separator="">
+                WHEN id=#{item.id}
+                <if test="item.name == null">
+                    AND 1=2
+                </if>
+                THEN #{item.name}
+            </foreach>
+            ELSE name END,
+            `type` = CASE
+            <foreach item="item" index="index" collection="list" separator="">
+                WHEN id=#{item.id}
+                <if test="item.creator == null">
+                    AND 1=2
+                </if>
+                THEN #{item.creator}
+            </foreach>
+            ELSE creator END,
+            `key` = CASE
+            <foreach item="item" index="index" collection="list" separator="">
+                WHEN id=#{item.id}
+                <if test="item.key == null">
+                    AND 1=2
+                </if>
+                THEN #{item.key}
+            </foreach>
+            ELSE `key` END,
+            `user_id` = CASE
+            <foreach item="item" index="index" collection="list" separator="">
+                WHEN id=#{item.id}
+                <if test="item.user_id == null">
+                    AND 1=2
+                </if>
+                THEN #{item.user_id}
+            </foreach>
+            ELSE user_id END,
+            `user_name` = CASE
+            <foreach item="item" index="index" collection="list" separator="">
+                WHEN id=#{item.id}
+                <if test="item.user_name == null">
+                    AND 1=2
+                </if>
+                THEN #{item.user_name}
+            </foreach>
+            ELSE user_name END,
+            `layer_id` = CASE
+            <foreach item="item" index="index" collection="list" separator="">
+                WHEN id=#{item.id}
+                <if test="item.layer_id == null">
+                    AND 1=2
+                </if>
+                THEN #{item.layer_id}
+            </foreach>
+            ELSE layer_id END,
+            `total_bucket_num` = CASE
+            <foreach item="item" index="index" collection="list" separator="">
+                WHEN id=#{item.id}
+                <if test="item.total_bucket_num == null">
+                    AND 1=2
+                </if>
+                THEN #{item.total_bucket_num}
+            </foreach>
+            ELSE total_bucket_num END,
+            `rate_flow` = CASE
+            <foreach item="item" index="index" collection="list" separator="">
+                WHEN id=#{item.id}
+                <if test="item.rate_flow == null">
+                    AND 1=2
+                </if>
+                THEN #{item.rate_flow}
+            </foreach>
+            ELSE `rate_flow` END,
+            `total_bucket_ids` = CASE
+            <foreach item="item" index="index" collection="list" separator="">
+                WHEN id=#{item.id}
+                <if test="item.total_bucket_ids == null">
+                    AND 1=2
+                </if>
+                THEN #{item.total_bucket_ids}
+            </foreach>
+            ELSE total_bucket_ids END,
+            `description` = CASE
+            <foreach item="item" index="index" collection="list" separator="">
+                WHEN id=#{item.id}
+                <if test="item.description == null">
+                    AND 1=2
+                </if>
+                THEN #{item.description}
+            </foreach>
+            ELSE description END
+        </set>
+        WHERE
+        <foreach item="item" index="index" collection="list" separator="OR">
+            id=#{item.id}
+        </foreach>
+    </update>
+    <select id="history" resultType="com.hupu.themis.admin.system.service.dto.HistoryDTO">
+        SELECT * FROM
+        (
+        SELECT
+        create_time AS createTime,
+        '新增实验' AS description,
+        user_name AS userName
+        FROM
+        experiment_group
+        WHERE
+        id = #{id}
+        UNION ALL
+        SELECT
+        create_time AS createTime,
+        description,
+        username AS userName
+        FROM
+        log
+        WHERE
+        description in ('修改实验','修改实验状态','开启/关闭实验')
+        AND (params LIKE '%ExperimentGroupVO(id=${id}%'
+        OR params LIKE '%id: ${id}%')
+        ) AS t
+        ORDER BY createTime DESC
+
+    </select>
+</mapper>

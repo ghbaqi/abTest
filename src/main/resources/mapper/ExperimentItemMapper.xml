@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hupu.themis.admin.system.mapper.ExperimentItemMapper">
+    <update id="updateBatch">
+        UPDATE
+        experiment_item
+        <set>
+            create_time = CASE
+            <foreach item="item" index="index" collection="list" separator="">
+                WHEN id=#{item.id}
+                <if test="item.createTime == null">
+                    AND 1=2
+                </if>
+                THEN #{item.createTime}
+            </foreach>
+            ELSE create_time END,
+            modify_time = CASE
+            <foreach item="item" index="index" collection="list" separator="">
+                WHEN id=#{item.id}
+                <if test="item.modifyTime == null">
+                    AND 1=2
+                </if>
+                THEN #{item.modifyTime}
+            </foreach>
+            ELSE modify_time END,
+            `param_key` = CASE
+            <foreach item="item" index="index" collection="list" separator="">
+                WHEN id=#{item.id}
+                <if test="item.paramKey == null">
+                    AND 1=2
+                </if>
+                THEN #{item.paramKey}
+            </foreach>
+            ELSE `param_key` END,
+            `param_value` = CASE
+            <foreach item="item" index="index" collection="list" separator="">
+                WHEN id=#{item.id}
+                <if test="item.paramValue == null">
+                    AND 1=2
+                </if>
+                THEN #{item.paramValue}
+            </foreach>
+            ELSE `param_value` END,
+            `bucket_ids` = CASE
+            <foreach item="item" index="index" collection="list" separator="">
+                WHEN id=#{item.id}
+                <if test="item.bucketIds == null">
+                    AND 1=2
+                </if>
+                THEN #{item.bucketIds}
+            </foreach>
+            ELSE `bucket_ids` END,
+            `bucket_num` = CASE
+            <foreach item="item" index="index" collection="list" separator="">
+                WHEN id=#{item.id}
+                <if test="item.bucketNum == null">
+                    AND 1=2
+                </if>
+                THEN #{item.bucketNum}
+            </foreach>
+            ELSE bucket_num END,
+            `experiment_group_bucket_num` = CASE
+            <foreach item="item" index="index" collection="list" separator="">
+                WHEN id=#{item.id}
+                <if test="item.experimentGroupBucketNum == null">
+                    AND 1=2
+                </if>
+                THEN #{item.experimentGroupBucketNum}
+            </foreach>
+            ELSE `experiment_group_bucket_num` END,
+            `item_type` = CASE
+            <foreach item="item" index="index" collection="list" separator="">
+                WHEN id=#{item.id}
+                <if test="item.itemType == null">
+                    AND 1=2
+                </if>
+                THEN #{item.itemType}
+            </foreach>
+            ELSE `item_type` END,
+            `white_list` = CASE
+            <foreach item="item" index="index" collection="list" separator="">
+                WHEN id=#{item.id}
+                <if test="item.whiteList == null or item.whiteList.length == 0">
+                    THEN NULL
+                </if>
+                <if test="item.whiteList != null and item.whiteList.length > 0">
+                    THEN #{item.whiteList}
+                </if>
+            </foreach>
+            ELSE white_list END,
+            `experiment_group_id` = CASE
+            <foreach item="item" index="index" collection="list" separator="">
+                WHEN id=#{item.id}
+                <if test="item.experimentGroupId == null">
+                    AND 1=2
+                </if>
+                THEN #{item.experimentGroupId}
+            </foreach>
+            ELSE experiment_group_id END,
+            `description` = CASE
+            <foreach item="item" index="index" collection="list" separator="">
+                WHEN id=#{item.id}
+                THEN #{item.description}
+            </foreach>
+            ELSE description END,
+            `name` = CASE
+            <foreach item="item" index="index" collection="list" separator="">
+                WHEN id=#{item.id}
+                <if test="item.name == null">
+                    AND 1=2
+                </if>
+                THEN #{item.name}
+            </foreach>
+            ELSE `name` END
+        </set>
+        WHERE
+        <foreach item="item" index="index" collection="list" separator="OR">
+            id=#{item.id}
+        </foreach>
+    </update>
+</mapper>
